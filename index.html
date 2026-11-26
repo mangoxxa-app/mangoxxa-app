@@ -7,87 +7,132 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root {
-  --bg: #0a0a0c;
-  --card: #141417;
-  --card2: #1c1c21;
-  --text: #f5f1e6;
-  --hint: #8e8a7e;
-  --line: #2a2a31;
+  --card: #22222a;
+  --card2: #2a2a33;
+  --text: #f7f3e8;
+  --hint: #9b97899;
+  --line: #3a3a45;
   --gold: #d4af37;
-  --gold-hi: #f3d27a;
-  --gold-lo: #9a7422;
+  --gold-hi: #f5d77e;
+  --gold-lo: #a27c24;
   --ok: #7fd1a6;
-  --err: #ff7a7a;
+  --err: #ff8a8a;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { margin: 0; background: var(--bg); color: var(--text);
-  font-family: -apple-system, system-ui, "Segoe UI", Roboto, sans-serif; }
-body { padding: 16px 16px 120px; max-width: 560px; margin: 0 auto; }
+html, body { margin: 0; color: var(--text); font-family: -apple-system, system-ui, "Segoe UI", Roboto, sans-serif; }
+body {
+  min-height: 100vh; padding: 16px 16px 120px; max-width: 560px; margin: 0 auto;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(212,175,55,.16) 0%, transparent 40%),
+    radial-gradient(circle at 100% 90%, rgba(120,90,200,.14) 0%, transparent 45%),
+    #18181e;
+  background-attachment: fixed;
+}
 
 /* ===== шапка ===== */
-.top { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
-.logo { width: 46px; height: 46px; border-radius: 14px; overflow: hidden; flex-shrink: 0;
-  display: grid; place-items: center; font-family: Georgia, serif; font-weight: 700; font-size: 20px; color: #111;
-  background: linear-gradient(135deg, var(--gold-hi), var(--gold-lo)); }
+.top { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.logo { width: 46px; height: 46px; border-radius: 15px; overflow: hidden; flex-shrink: 0;
+  display: grid; place-items: center; font-family: Georgia, serif; font-weight: 700; font-size: 20px; color: #161616;
+  background: linear-gradient(135deg, var(--gold-hi), var(--gold-lo)); box-shadow: 0 6px 18px rgba(212,175,55,.25); }
 .logo img { width: 100%; height: 100%; object-fit: cover; }
-.hi { font-size: 12px; color: var(--hint); letter-spacing: .3px; }
-.title { font-size: 18px; font-weight: 700; letter-spacing: .5px; }
+.hi { font-size: 12px; color: var(--hint); }
+.title { font-size: 18px; font-weight: 700; letter-spacing: 1.5px; }
 
-/* ===== экраны ===== */
+/* ===== анимации ===== */
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes shimmer { from { background-position: 0% 50%; } to { background-position: 200% 50%; } }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes glow { 0%,100% { box-shadow: 0 8px 24px rgba(212,175,55,.2); } 50% { box-shadow: 0 10px 36px rgba(212,175,55,.45); } }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+
 .screen { display: none; }
-.screen.active { display: block; animation: fade .3s ease; }
-@keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.screen.active { display: block; }
+.screen.active > * { animation: rise .55s cubic-bezier(.2,.7,.2,1) both; }
+.screen.active > *:nth-child(2) { animation-delay: .07s; }
+.screen.active > *:nth-child(3) { animation-delay: .14s; }
+.screen.active > *:nth-child(4) { animation-delay: .21s; }
+.screen.active > *:nth-child(5) { animation-delay: .28s; }
+.screen.active > *:nth-child(6) { animation-delay: .35s; }
 
-.banner { width: 100%; height: 170px; object-fit: cover; border-radius: 22px; margin-bottom: 16px;
-  border: 1px solid var(--line); }
-.hero { padding: 2px 2px 14px; }
-.hero h1 { font-size: 26px; margin: 0 0 6px; font-family: Georgia, serif; font-weight: 600; }
-.hero p { margin: 0; color: var(--hint); font-size: 14px; line-height: 1.5; }
+/* ===== главный экран ===== */
+.hero { position: relative; padding: 18px 18px 20px; border-radius: 26px; margin-bottom: 16px; overflow: hidden;
+  background: linear-gradient(160deg, #2b2513 0%, #1e1e26 65%); border: 1px solid #4a3d1c; }
+.hero::before, .hero::after { content: ""; position: absolute; border-radius: 50%; pointer-events: none; }
+.hero::before { width: 180px; height: 180px; right: -50px; top: -60px;
+  background: radial-gradient(circle, rgba(245,215,126,.35), transparent 70%); animation: float 6s ease-in-out infinite; }
+.hero::after { width: 120px; height: 120px; left: -40px; bottom: -40px;
+  background: radial-gradient(circle, rgba(140,100,255,.25), transparent 70%); animation: float 8s ease-in-out infinite reverse; }
+.badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--gold-hi); background: rgba(212,175,55,.1); border: 1px solid rgba(212,175,55,.35);
+  padding: 5px 10px; border-radius: 999px; margin-bottom: 12px; }
+.badge i { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); animation: pulse 1.6s infinite; }
+.hero h1 { position: relative; z-index: 1; font-size: 30px; line-height: 1.15; margin: 0 0 8px; font-family: Georgia, serif;
+  background: linear-gradient(90deg, #f5d77e, #fff3cc, #d4af37, #f5d77e);
+  background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: shimmer 5s linear infinite; }
+.hero p { position: relative; z-index: 1; margin: 0; color: #c9c4b4; font-size: 14px; line-height: 1.5; }
+.steps { position: relative; z-index: 1; display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+.steps span { font-size: 12px; padding: 6px 10px; border-radius: 10px; background: rgba(255,255,255,.05); color: #d9d4c4; }
+.steps span b { color: var(--gold-hi); margin-right: 4px; }
+.buyout { position: relative; z-index: 1; margin-top: 14px; font-size: 13px; color: var(--text);
+  background: rgba(0,0,0,.25); border-radius: 12px; padding: 10px 12px; }
+.buyout[hidden] { display: none; }
 
+/* ===== карточки ===== */
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 18px; margin-bottom: 14px; }
-.card-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.2px;
-  color: var(--gold); margin-bottom: 12px; }
+.card-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.2px; color: var(--gold); margin-bottom: 12px; }
 
 label { display: block; font-size: 12px; color: var(--hint); margin: 14px 0 6px; }
 input, textarea { width: 100%; padding: 13px 14px; border-radius: 14px; border: 1px solid var(--line);
-  background: var(--card2); color: var(--text); font-size: 16px; outline: none; font-family: inherit; }
-input:focus, textarea:focus { border-color: var(--gold); }
-input::placeholder, textarea::placeholder { color: #5b5850; }
+  background: var(--card2); color: var(--text); font-size: 16px; outline: none; font-family: inherit; transition: border-color .2s, box-shadow .2s; }
+input:focus, textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,175,55,.15); }
+input::placeholder, textarea::placeholder { color: #6c6a74; }
 .row { display: flex; gap: 10px; }
 .row > div { flex: 1; min-width: 0; }
 
 /* ===== площадки ===== */
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { padding: 8px 15px; border-radius: 999px; border: 1px solid var(--line); background: transparent;
-  color: var(--hint); font-size: 13px; font-family: inherit; }
-.chip.on { border-color: var(--gold); color: var(--gold-hi); background: rgba(212,175,55,.08); }
+  color: var(--hint); font-size: 13px; font-family: inherit; transition: all .2s; }
+.chip.on { border-color: var(--gold); color: #1a1a1a; background: linear-gradient(135deg, var(--gold-hi), var(--gold-lo)); font-weight: 600; }
 
 /* ===== переключатели ===== */
 .seg { display: flex; gap: 6px; background: var(--card2); padding: 4px; border-radius: 14px; }
 .seg button { flex: 1; padding: 11px 4px; border: none; border-radius: 10px; background: transparent;
-  color: var(--hint); font-size: 14px; font-family: inherit; }
-.seg button.on { background: linear-gradient(135deg, var(--gold-hi), var(--gold-lo)); color: #121212; font-weight: 700; }
-.seg.big button { display: flex; flex-direction: column; gap: 3px; padding: 13px 4px; }
-.seg.big small { font-size: 12px; font-weight: 400; opacity: .8; }
+  color: var(--hint); font-size: 14px; font-family: inherit; transition: all .2s; }
+.seg button.on { background: linear-gradient(135deg, var(--gold-hi), var(--gold-lo)); color: #161616; font-weight: 700; }
+
+/* ===== доставка: карточки ===== */
+.ships { display: flex; gap: 10px; }
+.ship { flex: 1; text-align: left; padding: 14px; border-radius: 18px; border: 1px solid var(--line);
+  background: var(--card2); color: var(--text); font-family: inherit; cursor: pointer; transition: all .25s; }
+.ship svg { width: 30px; height: 30px; stroke: var(--gold); fill: none; margin-bottom: 8px; }
+.ship-name { font-weight: 700; font-size: 15px; }
+.ship-days { font-size: 12px; color: var(--hint); margin-top: 2px; }
+.ship-price { font-size: 17px; font-weight: 800; margin-top: 10px; }
+.ship-price span { font-size: 12px; font-weight: 500; color: var(--hint); }
+.ship-usd { font-size: 12px; color: var(--hint); margin-top: 2px; }
+.ship.on { border-color: var(--gold); transform: translateY(-2px);
+  box-shadow: 0 0 0 1px var(--gold), 0 12px 30px rgba(212,175,55,.18);
+  background: linear-gradient(160deg, #332b13, var(--card2)); }
 
 /* ===== итог ===== */
 .result { border-radius: 24px; padding: 20px; margin: 6px 0 16px; position: relative; overflow: hidden;
-  background: linear-gradient(160deg, #1f1a0e 0%, #0f0f12 70%); border: 1px solid #3a2f14; }
-.result::after { content: ""; position: absolute; right: -40px; top: -40px; width: 140px; height: 140px;
-  border-radius: 50%; background: radial-gradient(circle, rgba(212,175,55,.25), transparent 70%); }
-.res-label { font-size: 12px; color: var(--gold); letter-spacing: 1px; text-transform: uppercase; }
-.res-total { font-size: 36px; font-weight: 700; margin: 6px 0 12px; font-family: Georgia, serif;
-  background: linear-gradient(90deg, var(--gold-hi), var(--gold)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.res-line { display: flex; justify-content: space-between; font-size: 14px; color: #cfc8b4; padding: 8px 0;
-  border-top: 1px solid #2e2615; }
+  background: linear-gradient(160deg, #2e2713 0%, #1d1d25 70%); border: 1px solid #4a3d1c; }
+.result::after { content: ""; position: absolute; right: -40px; top: -40px; width: 150px; height: 150px;
+  border-radius: 50%; background: radial-gradient(circle, rgba(212,175,55,.3), transparent 70%); }
+.res-label { font-size: 12px; color: var(--gold-hi); letter-spacing: 1px; text-transform: uppercase; }
+.res-total { font-size: 38px; font-weight: 700; margin: 6px 0 12px; font-family: Georgia, serif;
+  background: linear-gradient(90deg, var(--gold-hi), #fff3cc, var(--gold)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.res-line { display: flex; justify-content: space-between; font-size: 14px; color: #d4cdb8; padding: 9px 0; border-top: 1px solid #3a3118; }
 .res-line b { color: var(--text); font-weight: 600; }
-.muted { color: #7c776a; font-size: 14px; }
+.muted { color: #8c8799; font-size: 14px; }
 
 /* ===== кнопки ===== */
 .cta { width: 100%; padding: 17px; border: none; border-radius: 18px; font-size: 16px; font-weight: 700;
-  color: #121212; background: linear-gradient(135deg, var(--gold-hi), var(--gold) 50%, var(--gold-lo));
-  font-family: inherit; letter-spacing: .3px; box-shadow: 0 8px 24px rgba(212,175,55,.18); }
-.cta:active { transform: scale(.985); }
+  color: #161616; background: linear-gradient(135deg, var(--gold-hi), var(--gold) 50%, var(--gold-lo));
+  font-family: inherit; letter-spacing: .3px; animation: glow 3s ease-in-out infinite; transition: transform .15s; }
+.cta:active { transform: scale(.97); }
 .err { color: var(--err); font-size: 13px; margin: 12px 4px 0; display: none; }
 .note { color: var(--hint); font-size: 12px; line-height: 1.6; margin: 14px 4px 0; }
 
@@ -96,18 +141,19 @@ input::placeholder, textarea::placeholder { color: #5b5850; }
 .rate:first-of-type { border-top: none; padding-top: 4px; }
 .rate b { font-size: 15px; }
 .rate small { display: block; color: var(--hint); font-size: 12px; margin-top: 4px; }
-.rate .price { font-size: 18px; font-weight: 700; color: var(--gold-hi); }
+.rate .price { text-align: right; font-size: 17px; font-weight: 800; color: var(--gold-hi); }
+.rate .price small { text-align: right; font-size: 12px; color: var(--hint); font-weight: 500; }
 table { width: 100%; border-collapse: collapse; font-size: 14px; }
 th, td { text-align: left; padding: 12px 0; border-top: 1px solid var(--line); }
-th { color: var(--hint); font-weight: 500; font-size: 12px; border-top: none; text-transform: uppercase; letter-spacing: .8px; }
+th { color: var(--hint); font-weight: 500; font-size: 11px; border-top: none; text-transform: uppercase; letter-spacing: .8px; }
 td:not(:first-child), th:not(:first-child) { text-align: right; }
-td:nth-child(3) { color: var(--gold-hi); }
+td:nth-child(3) { color: var(--gold-hi); font-weight: 600; }
 
 /* ===== менеджер ===== */
 .manager { display: flex; gap: 14px; align-items: center; }
 .avatar { width: 68px; height: 68px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold); flex-shrink: 0; }
 .avatar-ph { width: 68px; height: 68px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center;
-  font-family: Georgia, serif; font-size: 26px; color: #121212; background: linear-gradient(135deg, var(--gold-hi), var(--gold-lo)); }
+  font-family: Georgia, serif; font-size: 26px; color: #161616; background: linear-gradient(135deg, var(--gold-hi), var(--gold-lo)); }
 .mname { font-weight: 700; font-size: 16px; }
 .mstatus { color: var(--ok); font-size: 12px; margin-top: 4px; }
 details { border-top: 1px solid var(--line); padding: 14px 0; }
@@ -121,14 +167,13 @@ details p { color: var(--hint); font-size: 14px; line-height: 1.6; margin: 10px 
 /* ===== нижнее меню ===== */
 .tabbar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 14px; width: calc(100% - 32px);
   max-width: 528px; display: flex; gap: 6px; padding: 6px; border-radius: 24px;
-  background: rgba(20,20,23,.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+  background: rgba(34,34,42,.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(0,0,0,.4); }
 .tab { flex: 1; border: none; background: transparent; border-radius: 18px; padding: 10px 0;
-  color: var(--hint); font-family: inherit; font-size: 11px; letter-spacing: .3px;
-  display: flex; flex-direction: column; align-items: center; gap: 3px; }
-.tab span:first-child { font-size: 19px; filter: grayscale(1); opacity: .7; }
-.tab.on { background: var(--card2); color: var(--gold-hi); font-weight: 600; }
-.tab.on span:first-child { filter: none; opacity: 1; }
+  color: var(--hint); font-family: inherit; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 3px; transition: all .25s; }
+.tab span:first-child { font-size: 19px; filter: grayscale(1); opacity: .6; transition: transform .25s; }
+.tab.on { background: linear-gradient(135deg, rgba(245,215,126,.18), rgba(162,124,36,.18)); color: var(--gold-hi); font-weight: 600; }
+.tab.on span:first-child { filter: none; opacity: 1; transform: scale(1.15); }
 </style>
 </head>
 <body>
@@ -144,11 +189,19 @@ details p { color: var(--hint); font-size: 14px; line-height: 1.6; margin: 10px 
 <main>
   <!-- ===== Экран 1: расчёт ===== -->
   <section id="s-calc" class="screen active">
-    <img class="banner" src="banner.jpg" alt="" onerror="this.remove()">
+    <img class="banner" src="banner.jpg" alt="" onerror="this.remove()" style="width:100%;height:170px;object-fit:cover;border-radius:22px;margin-bottom:16px;border:1px solid var(--line)">
 
     <div class="hero">
-      <h1>Расчёт заказа</h1>
-      <p>Вставьте ссылку на товар, укажите цену и вес. Покажем итог с доставкой.</p>
+      <div class="badge"><i></i>Заказы открыты</div>
+      <h1>Выкупаем из Китая</h1>
+      <p>Вставьте ссылку, укажите цену и вес, а мы посчитаем итог с доставкой.</p>
+      <div class="steps">
+        <span><b>1</b>Ссылка</span>
+        <span><b>2</b>Расчёт</span>
+        <span><b>3</b>Заявка</span>
+        <span><b>4</b>Доставка</span>
+      </div>
+      <div class="buyout" id="buyout" hidden></div>
     </div>
 
     <div class="card">
@@ -180,11 +233,23 @@ details p { color: var(--hint); font-size: 14px; line-height: 1.6; margin: 10px 
 
     <div class="card">
       <div class="card-title">Доставка</div>
-      <div class="seg big" data-group="method">
-        <button class="on" data-value="normal"><b>Обычная</b><small>15–25 дней</small></button>
-        <button data-value="air"><b>Авиа</b><small>3–7 дней</small></button>
+      <div class="ships">
+        <button class="ship on" data-method="normal">
+          <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h12v10H2z"/><path d="M14 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+          <div class="ship-name">Эконом</div>
+          <div class="ship-days">15–25 дней</div>
+          <div class="ship-price">20 BYN <span>/кг</span></div>
+          <div class="ship-usd">≈ 6,7 $ / кг</div>
+        </button>
+        <button class="ship" data-method="air">
+          <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 14 3 11.5v-1.5l7.5-1.5L14 4h2l-1.5 5.5L19 11l2 1v1l-7 1.5-1.5 5.5h-2z"/></svg>
+          <div class="ship-name">Авиа</div>
+          <div class="ship-days">3–7 дней</div>
+          <div class="ship-price">90 BYN <span>/кг</span></div>
+          <div class="ship-usd">≈ 30 $ / кг</div>
+        </button>
       </div>
-      <div class="row">
+      <div class="row" style="margin-top:4px">
         <div>
           <label>Вес, кг</label>
           <input id="weight" type="number" inputmode="decimal" placeholder="0.5">
@@ -212,25 +277,26 @@ details p { color: var(--hint); font-size: 14px; line-height: 1.6; margin: 10px 
   <!-- ===== Экран 2: тарифы ===== -->
   <section id="s-rates" class="screen">
     <div class="hero">
+      <div class="badge"><i></i>Прозрачные цены</div>
       <h1>Тарифы</h1>
       <p>Доставка считается по весу товара вместе с упаковкой.</p>
     </div>
 
     <div class="card">
       <div class="rate">
-        <div><b>Обычная доставка</b><small>15–25 дней</small></div>
-        <div class="price">20 BYN / кг</div>
+        <div><b>Эконом</b><small>15–25 дней</small></div>
+        <div class="price">20 BYN / кг<small>≈ 6,7 $ / кг</small></div>
       </div>
       <div class="rate">
-        <div><b>Авиа доставка</b><small>3–7 дней</small></div>
-        <div class="price" id="airPrice">—</div>
+        <div><b>Авиа</b><small>3–7 дней</small></div>
+        <div class="price">90 BYN / кг<small>≈ 30 $ / кг</small></div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">Примеры стоимости</div>
+      <div class="card-title">Примеры стоимости доставки</div>
       <table>
-        <thead><tr><th>Вес</th><th>Обычная</th><th>Авиа</th></tr></thead>
+        <thead><tr><th>Вес</th><th>Эконом</th><th>Авиа</th></tr></thead>
         <tbody id="examples"></tbody>
       </table>
     </div>
@@ -241,7 +307,8 @@ details p { color: var(--hint); font-size: 14px; line-height: 1.6; margin: 10px 
   <!-- ===== Экран 3: менеджер ===== -->
   <section id="s-manager" class="screen">
     <div class="hero">
-      <h1>Связь с менеджером</h1>
+      <div class="badge"><i></i>На связи</div>
+      <h1>Менеджер</h1>
       <p>По вопросам наличия, сроков и оформления заказа.</p>
     </div>
 
@@ -249,7 +316,7 @@ details p { color: var(--hint); font-size: 14px; line-height: 1.6; margin: 10px 
       <img class="avatar" src="manager.jpg" alt="" onerror="this.outerHTML='<div class=&quot;avatar-ph&quot;>M</div>'">
       <div>
         <div class="mname">Менеджер Mangoxxa</div>
-        <div class="mstatus">● На связи в Telegram</div>
+        <div class="mstatus">● Отвечает в Telegram</div>
       </div>
     </div>
 
@@ -262,7 +329,7 @@ details p { color: var(--hint); font-size: 14px; line-height: 1.6; margin: 10px 
       </details>
       <details>
         <summary>Сколько ждать заказ?</summary>
-        <p>Авиа: 3–7 дней. Обычная: 15–25 дней. Срок считается от получения товара на складе.</p>
+        <p>Авиа: 3–7 дней. Эконом: 15–25 дней. Срок считается от получения товара на складе.</p>
       </details>
       <details>
         <summary>Как выбрать размер?</summary>
@@ -281,13 +348,15 @@ details p { color: var(--hint); font-size: 14px; line-height: 1.6; margin: 10px 
 <script>
 // ===== НАСТРОЙКИ =====
 const CONFIG = {
-  CNY_RATE: 0.55,          // курс юаня к BYN
-  SERVICE_PERCENT: 10,     // комиссия байера, %
-  SERVICE_MIN: 5,          // минимальная комиссия, BYN
-  NORMAL_PER_KG: 20,       // обычная доставка, BYN/кг
-  AIR_PER_KG_USD: 30,      // авиа доставка, USD/кг
-  USD_BYN: 3.2,            // курс доллара к BYN — ПРОВЕРЬТЕ актуальный
-  MIN_SHIPPING: 5,         // минимальная доставка, BYN
+  CNY_RATE: 0.55,            // курс юаня к BYN
+  SERVICE_PERCENT: 5,        // комиссия байера, %
+  SERVICE_MIN: 5,            // минимальная комиссия, BYN
+  ECON_PER_KG: 20,           // эконом, BYN/кг
+  AIR_PER_KG: 90,            // авиа, BYN/кг
+  ECON_USD_PER_KG: '6,7',    // эконом, $/кг (для показа)
+  AIR_USD_PER_KG: '30',      // авиа, $/кг (для показа)
+  MIN_SHIPPING: 5,           // минимальная доставка, BYN
+  BUYOUT: { number: '', deadline: '' }, // например: { number: '26', deadline: '14 сентября' }
   MANAGER_LINK: 'https://t.me/MANAGERmangoxxa',
   MARKETS: ['Taobao', 'Poizon', '1688', 'Weidian', 'Pinduoduo', 'Другое'],
 };
@@ -303,6 +372,12 @@ const state = { quality: 'original', condition: 'new', method: 'normal', market:
 const user = tg?.initDataUnsafe?.user;
 if (user?.first_name) $('hi').textContent = `Привет, ${user.first_name}`;
 
+// блок активного выкупа (показывается, если заполнен в CONFIG)
+if (CONFIG.BUYOUT.number) {
+  $('buyout').textContent = `Выкуп #${CONFIG.BUYOUT.number}${CONFIG.BUYOUT.deadline ? ' · заказ до ' + CONFIG.BUYOUT.deadline : ''}`;
+  $('buyout').hidden = false;
+}
+
 // площадки
 CONFIG.MARKETS.forEach(name => {
   const b = document.createElement('button');
@@ -316,7 +391,7 @@ CONFIG.MARKETS.forEach(name => {
   $('markets').appendChild(b);
 });
 
-// переключатели
+// переключатели качества и состояния
 document.querySelectorAll('.seg').forEach(group => {
   group.querySelectorAll('button').forEach(btn => {
     btn.onclick = () => {
@@ -328,6 +403,16 @@ document.querySelectorAll('.seg').forEach(group => {
   });
 });
 
+// карточки доставки
+document.querySelectorAll('.ship').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.ship').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    state.method = btn.dataset.method;
+    calc();
+  };
+});
+
 ['price', 'weight'].forEach(id => $(id).addEventListener('input', calc));
 
 // вкладки
@@ -336,13 +421,30 @@ document.querySelectorAll('.tab').forEach(tab => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     tab.classList.add('on');
-    $(tab.dataset.screen).classList.add('active');
+    const screen = $(tab.dataset.screen);
+    screen.classList.remove('active');
+    void screen.offsetWidth; // перезапуск анимации
+    screen.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 });
 
+// плавная смена цифры
+function tween(el, to, fmt) {
+  const from = parseFloat(el.dataset.v) || 0;
+  el.dataset.v = to;
+  const t0 = performance.now();
+  const d = 500;
+  (function step(t) {
+    const k = Math.min((t - t0) / d, 1);
+    const e = 1 - Math.pow(1 - k, 3);
+    el.textContent = fmt(from + (to - from) * e);
+    if (k < 1) requestAnimationFrame(step);
+  })(t0);
+}
+
 function shippingCost(kg, method) {
-  const perKg = method === 'air' ? CONFIG.AIR_PER_KG_USD * CONFIG.USD_BYN : CONFIG.NORMAL_PER_KG;
+  const perKg = method === 'air' ? CONFIG.AIR_PER_KG : CONFIG.ECON_PER_KG;
   return Math.max(kg * perKg, CONFIG.MIN_SHIPPING);
 }
 
@@ -352,6 +454,7 @@ function calc() {
 
   if (!cny || !kg) {
     $('total').textContent = '—';
+    $('total').dataset.v = 0;
     $('rows').innerHTML = '<div class="muted">Укажите цену и вес, чтобы увидеть расчёт</div>';
     return null;
   }
@@ -362,10 +465,10 @@ function calc() {
   const total = goods + service + shipping;
   const days = state.method === 'air' ? '3–7 дней' : '15–25 дней';
 
-  $('total').textContent = `${total.toFixed(2)} BYN`;
+  tween($('total'), total, v => v.toFixed(2) + ' BYN');
   $('rows').innerHTML =
     `<div class="res-line"><span>Товар</span><b>${goods.toFixed(2)} BYN</b></div>` +
-    `<div class="res-line"><span>Комиссия байера</span><b>${service.toFixed(2)} BYN</b></div>` +
+    `<div class="res-line"><span>Комиссия ${CONFIG.SERVICE_PERCENT}%</span><b>${service.toFixed(2)} BYN</b></div>` +
     `<div class="res-line"><span>Доставка, ${days}</span><b>${shipping.toFixed(2)} BYN</b></div>`;
 
   return { cny, kg, total };
@@ -401,7 +504,6 @@ $('send').onclick = () => {
 };
 
 // тарифы
-$('airPrice').textContent = `${CONFIG.AIR_PER_KG_USD} $ / кг`;
 $('ratesNote').textContent =
   `Курс юаня: ${CONFIG.CNY_RATE} BYN. Комиссия байера: ${CONFIG.SERVICE_PERCENT}% от цены товара, минимум ${CONFIG.SERVICE_MIN} BYN.`;
 $('examples').innerHTML = [0.5, 1, 2, 5].map(kg =>
