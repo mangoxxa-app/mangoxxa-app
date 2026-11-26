@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mangoxxa — расчёт и заказ</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root {
+  --bg: var(--tg-theme-bg-color, #ffffff);
+  --text: var(--tg-theme-text-color, #111111);
+  --hint: var(--tg-theme-hint-color, #888888);
+  --btn: var(--tg-theme-button-color, #2481cc);
+  --btn-text: var(--tg-theme-button-text-color, #ffffff);
+  --card: var(--tg-theme-secondary-bg-color, #f2f2f2);
+}
+* { box-sizing: border-box; }
+body { margin: 0; padding: 16px; font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); }
+h1 { font-size: 20px; margin: 0 0 4px; }
+.sub { color: var(--hint); font-size: 13px; margin-bottom: 14px; }
+.card { background: var(--card); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.card h2 { font-size: 15px; margin: 0 0 6px; }
+label { display: block; font-size: 13px; color: var(--hint); margin: 10px 0 4px; }
+input, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; background: var(--bg); color: var(--text); }
+.row { display: flex; gap: 8px; }
+.row > div { flex: 1; }
+.seg { display: flex; gap: 6px; margin-top: 4px; }
+.seg button { flex: 1; padding: 10px 4px; border-radius: 8px; border: 1px solid #ccc; background: var(--bg); color: var(--text); font-size: 14px; }
+.seg button.on { background: var(--btn); color: var(--btn-text); border-color: var(--btn); }
+.result { font-size: 14px; line-height: 1.8; }
+.total { font-size: 20px; font-weight: 700; margin-top: 6px; }
+.note { font-size: 12px; color: var(--hint); margin-top: 8px; line-height: 1.4; }
+.submit { width: 100%; padding: 14px; border: none; border-radius: 10px; background: var(--btn); color: var(--btn-text); font-size: 16px; font-weight: 600; margin-top: 4px; }
+.err { color: #d33; font-size: 13px; margin-top: 8px; display: none; }
+</style>
+</head>
+<body>
+
+<h1>Mangoxxa — расчёт и заказ</h1>
+<div class="sub">Вставьте ссылку на товар, укажите цену и вес — получите итог.</div>
+
+<div class="card">
+  <h2>Товар</h2>
+  <label>Ссылка на товар</label>
+  <input id="link" placeholder="https://item.taobao.com/...">
+  <div class="row">
+    <div>
+      <label>Цена, ¥ (юани)</label>
+      <input id="price" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0">
+    </div>
+    <div>
+      <label>Размер</label>
+      <input id="size" placeholder="M, 42, 170/88">
+    </div>
+  </div>
+  <label>Оригинал или копия</label>
+  <div class="seg" data-group="quality">
+    <button class="on" data-value="original">Оригинал</button>
+    <button data-value="copy">Копия</button>
+  </div>
+  <label>Состояние</label>
+  <div class="seg" data-group="condition">
+    <button class="on" data-value="new">Новое</button>
+    <button data-value="used">Б/у</button>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Доставка</h2>
+  <div class="seg" data-group="method">
+    <button class="on" data-value="normal">Обычная</button>
+    <button data-value="air">Авиа</button>
+  </div>
+  <div class="row">
+    <div>
+      <label>Вес, кг (примерно)</label>
+      <input id="weight" type="number" inputmode="decimal" min="0" step="0.1" placeholder="0.5">
+    </div>
+    <div>
+      <label>Город доставки</label>
+      <input id="city" placeholder="Минск">
+    </div>
+  </div>
+  <label>Комментарий</label>
+  <textarea id="comment" rows="2" placeholder="Необязательно"></textarea>
+</div>
+
+<div class="card">
+  <h2>Расчёт</h2>
+  <div class="result" id="result">Заполните цену и вес</div>
+  <div class="total" id="total"></div>
+  <div class="note">Оплата 100% предоплатой — после подтверждения заказа менеджером.</div>
+</div>
+
+<button class="submit" id="send">Отправить заявку менеджеру</button>
+<div class="err" id="err"></div>
+
+<script>
+// ===== НАСТРОЙКИ =====
+const CONFIG = {
+  CNY_RATE: 0.55,          // курс юаня к BYN
+  SERVICE_PERCENT: 10,     // комиссия байера, %
+  SERVICE_MIN: 5,          // минимальная комиссия, BYN
+  NORMAL_PER_KG: 20,       // обычная доставка, BYN за кг (15–25 дней)
+  AIR_PER_KG_USD: 30,      // авиа доставка, USD за кг (3–7 дней)
+  USD_BYN: 3.2,            // курс доллара к BYN — ПРОВЕРЬТЕ актуальный
+  MIN_SHIPPING: 5,         // минимальная стоимость доставки, BYN
+};
+// =====================
+
+const tg = window.Telegram?.WebApp;
+tg?.ready();
+tg?.expand();
+
+const $ = id => document.getElementById(id);
+const state = { quality: 'original', condition: 'new', method: 'normal' };
+
+document.querySelectorAll('.seg').forEach(group => {
+  group.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      group.querySelectorAll('button').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      state[group.dataset.group] = btn.dataset.value;
+      calc();
+    });
+  });
+});
+
+['price', 'weight'].forEach(id => $(id).addEventListener('input', calc));
+
+function calc() {
+  const cny = parseFloat($('price').value) || 0;
+  const kg = parseFloat($('weight').value) || 0;
+
+  if (!cny || !kg) {
+    $('result').textContent = 'Заполните цену и вес';
+    $('total').textContent = '';
+    return null;
+  }
+
+  const goods = cny * CONFIG.CNY_RATE;
+  const service = Math.max(goods * CONFIG.SERVICE_PERCENT / 100, CONFIG.SERVICE_MIN);
+  const perKg = state.method === 'air'
+    ? CONFIG.AIR_PER_KG_USD * CONFIG.USD_BYN
+    : CONFIG.NORMAL_PER_KG;
+  const shipping = Math.max(kg * perKg, CONFIG.MIN_SHIPPING);
+  const total = goods + service + shipping;
+
+  $('result').innerHTML =
+    `Товар: ${goods.toFixed(2)} BYN<br>` +
+    `Комиссия: ${service.toFixed(2)} BYN<br>` +
+    `Доставка (${state.method === 'air' ? 'авиа, 3–7 дней' : 'обычная, 15–25 дней'}): ${shipping.toFixed(2)} BYN`;
+  $('total').textContent = `Итого: ${total.toFixed(2)} BYN`;
+
+  return { cny, kg, goods, service, shipping, total };
+}
+
+function showError(msg) {
+  $('err').textContent = msg;
+  $('err').style.display = 'block';
+}
+
+$('send').addEventListener('click', () => {
+  $('err').style.display = 'none';
+
+  const link = $('link').value.trim();
+  const c = calc();
+
+  if (!link) return showError('Вставьте ссылку на товар');
+  if (!c) return showError('Укажите цену и вес');
+  if (!$('city').value.trim()) return showError('Укажите город доставки');
+
+  const payload = {
+    link,
+    price_cny: c.cny,
+    size: $('size').value.trim(),
+    quality: state.quality,
+    condition: state.condition,
+    method: state.method,
+    weight_kg: c.kg,
+    city: $('city').value.trim(),
+    comment: $('comment').value.trim(),
+    total_byn: c.total.toFixed(2),
+  };
+
+  if (!tg) return showError('Откройте приложение из Telegram');
+  tg.sendData(JSON.stringify(payload));
+});
+</script>
+</body>
+</html>
