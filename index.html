@@ -39,7 +39,6 @@ body {
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
-@keyframes sheen { from { background-position: -200% 0; } to { background-position: 200% 0; } }
 
 .screen { display: none; }
 .screen.active { display: block; }
@@ -50,8 +49,11 @@ body {
 .screen.active > *:nth-child(5) { animation-delay: .28s; }
 .screen.active > *:nth-child(6) { animation-delay: .35s; }
 
+/* ===== баннер ===== */
+.banner { width: 100%; height: 170px; object-fit: cover; border-radius: 24px; margin-bottom: 16px; border: 1px solid var(--line); }
+
 /* ===== hero ===== */
-.hero { position: relative; padding: 22px 20px 22px; border-radius: 28px; margin-bottom: 16px; overflow: hidden;
+.hero { position: relative; padding: 22px 20px; border-radius: 28px; margin-bottom: 16px; overflow: hidden;
   background: var(--ink); color: #f5f3ee; }
 .hero::before { content: ""; position: absolute; width: 220px; height: 220px; right: -80px; top: -90px; border-radius: 50%;
   background: radial-gradient(circle, rgba(31,138,110,.55), transparent 70%); animation: float 7s ease-in-out infinite; }
@@ -71,8 +73,8 @@ body {
 
 /* ===== карточки ===== */
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 20px; margin-bottom: 14px; }
-.card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px; color: var(--ink); margin-bottom: 14px;
-  display: flex; align-items: center; gap: 8px; }
+.card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px; color: var(--ink);
+  margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
 .card-title::before { content: ""; width: 16px; height: 2px; background: var(--accent); border-radius: 2px; }
 
 label { display: block; font-size: 12px; color: var(--hint); margin: 14px 0 6px; }
@@ -82,6 +84,20 @@ input:focus, textarea:focus { border-color: var(--ink); background: #fff; box-sh
 input::placeholder, textarea::placeholder { color: #b3b0a3; }
 .row { display: flex; gap: 10px; }
 .row > div { flex: 1; min-width: 0; }
+.opt { color: #aaa595; font-weight: 400; }
+
+/* ===== ссылка с кнопкой вставки ===== */
+.linkrow { display: flex; gap: 8px; }
+.linkrow input { flex: 1; min-width: 0; }
+.pastebtn { padding: 0 16px; border-radius: 14px; border: none; background: var(--ink); color: #fff;
+  font-family: inherit; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.pastebtn:active { opacity: .8; }
+
+/* ===== фото ===== */
+.photo { display: flex; align-items: center; justify-content: center; height: 120px; margin: 0;
+  border-radius: 18px; border: 1px dashed #cfcabb; background: #fff; color: var(--hint);
+  font-size: 14px; cursor: pointer; overflow: hidden; }
+.photo img { width: 100%; height: 100%; object-fit: cover; }
 
 /* ===== площадки ===== */
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -115,7 +131,8 @@ input::placeholder, textarea::placeholder { color: #b3b0a3; }
 .result::after { content: ""; position: absolute; right: -50px; top: -50px; width: 170px; height: 170px; border-radius: 50%;
   background: radial-gradient(circle, rgba(31,138,110,.45), transparent 70%); }
 .res-label { font-size: 11px; color: #9fd8c4; letter-spacing: 1.3px; text-transform: uppercase; font-weight: 700; position: relative; z-index: 1; }
-.res-total { position: relative; z-index: 1; font-size: 40px; font-weight: 600; margin: 8px 0 14px; font-family: Georgia, serif; }
+.res-total { position: relative; z-index: 1; font-size: 40px; font-weight: 600; margin: 8px 0 4px; font-family: Georgia, serif; }
+.res-rub { position: relative; z-index: 1; color: #a9a79f; font-size: 14px; margin: 0 0 14px; }
 .res-line { position: relative; z-index: 1; display: flex; justify-content: space-between; font-size: 14px; color: #a9a79f; padding: 10px 0; border-top: 1px solid rgba(255,255,255,.1); }
 .res-line b { color: #f5f3ee; font-weight: 600; }
 .muted { color: #a9a79f; font-size: 14px; position: relative; z-index: 1; }
@@ -140,8 +157,9 @@ th, td { text-align: left; padding: 13px 0; border-top: 1px solid var(--line); }
 th { color: var(--hint); font-weight: 500; font-size: 11px; border-top: none; text-transform: uppercase; letter-spacing: .9px; }
 td:not(:first-child), th:not(:first-child) { text-align: right; }
 td:nth-child(3) { color: var(--accent); font-weight: 700; }
+td small { display: block; color: var(--hint); font-size: 11px; font-weight: 400; }
 
-/* ===== инструкция: горизонтальные карточки ===== */
+/* ===== инструкция ===== */
 .flow { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -16px; padding: 4px 16px 16px; scrollbar-width: none; }
 .flow::-webkit-scrollbar { display: none; }
 .fcard { flex: 0 0 78%; scroll-snap-align: start; border-radius: 26px; padding: 22px; min-height: 220px;
@@ -202,7 +220,7 @@ details p { color: #5f5c52; font-size: 14px; line-height: 1.6; margin: 10px 0 0;
 <main>
   <!-- ===== Экран 1: расчёт ===== -->
   <section id="s-calc" class="screen active">
-    <img src="banner.jpg" alt="" onerror="this.remove()" style="width:100%;height:170px;object-fit:cover;border-radius:24px;margin-bottom:16px;border:1px solid var(--line)">
+    <img class="banner" src="banner.jpg" alt="" onerror="this.remove()">
 
     <div class="hero">
       <div class="badge"><i></i>Заказы открыты</div>
@@ -220,8 +238,18 @@ details p { color: #5f5c52; font-size: 14px; line-height: 1.6; margin: 10px 0 0;
     <div class="card">
       <div class="card-title">Товар</div>
       <div class="chips" id="markets"></div>
+
       <label>Ссылка на товар</label>
-      <input id="link" placeholder="https://..." inputmode="url">
+      <div class="linkrow">
+        <input id="link" placeholder="https://..." inputmode="url">
+        <button class="pastebtn" id="paste" type="button">Вставить</button>
+      </div>
+
+      <label>Фото товара <span class="opt">(необязательно)</span></label>
+      <label class="photo" id="photoBox" for="photo"><span>+ Добавить фото</span></label>
+      <input id="photo" type="file" accept="image/*" hidden>
+      <div class="note" style="margin-top:6px">Фото не уходит в заявку автоматически. Отправьте его менеджеру в чат после заказа.</div>
+
       <div class="row">
         <div>
           <label>Цена, ¥</label>
@@ -279,6 +307,7 @@ details p { color: #5f5c52; font-size: 14px; line-height: 1.6; margin: 10px 0 0;
     <div class="result">
       <div class="res-label">Итого к оплате</div>
       <div class="res-total" id="total">—</div>
+      <div class="res-rub" id="totalRub"></div>
       <div id="rows"><div class="muted">Укажите цену и вес, чтобы увидеть расчёт</div></div>
     </div>
 
@@ -403,6 +432,7 @@ details p { color: #5f5c52; font-size: 14px; line-height: 1.6; margin: 10px 0 0;
 // ===== НАСТРОЙКИ =====
 const CONFIG = {
   CNY_RATE: 0.55,            // курс юаня к BYN
+  RUB_PER_BYN: 29,           // сколько рублей в 1 BYN — ПРОВЕРЬТЕ актуальный курс (НБРБ)
   SERVICE_PERCENT: 5,        // комиссия байера, %
   SERVICE_MIN: 5,            // минимальная комиссия, BYN
   ECON_PER_KG: 20,           // эконом, BYN/кг
@@ -466,6 +496,27 @@ document.querySelectorAll('.ship').forEach(btn => {
 
 ['price', 'weight'].forEach(id => $(id).addEventListener('input', calc));
 
+// вставка ссылки из буфера
+$('paste').onclick = async () => {
+  try {
+    const text = (await navigator.clipboard.readText()).trim();
+    if (!text) return showError('В буфере пусто. Скопируйте ссылку и попробуйте снова');
+    $('link').value = text;
+    $('paste').textContent = 'Готово';
+    setTimeout(() => { $('paste').textContent = 'Вставить'; }, 1200);
+  } catch {
+    $('link').focus();
+    showError('Не удалось вставить. Зажмите поле ссылки и выберите «Вставить»');
+  }
+};
+
+// предпросмотр фото
+$('photo').onchange = e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  $('photoBox').innerHTML = `<img src="${URL.createObjectURL(file)}" alt="">`;
+};
+
 // вкладки
 document.querySelectorAll('.tab').forEach(tab => {
   tab.onclick = () => {
@@ -493,6 +544,10 @@ function tween(el, to, fmt) {
   })(t0);
 }
 
+function fmtRub(byn) {
+  return Math.round(byn * CONFIG.RUB_PER_BYN).toLocaleString('ru-RU');
+}
+
 function shippingCost(kg, method) {
   const perKg = method === 'air' ? CONFIG.AIR_PER_KG : CONFIG.ECON_PER_KG;
   return Math.max(kg * perKg, CONFIG.MIN_SHIPPING);
@@ -505,6 +560,7 @@ function calc() {
   if (!cny || !kg) {
     $('total').textContent = '—';
     $('total').dataset.v = 0;
+    $('totalRub').textContent = '';
     $('rows').innerHTML = '<div class="muted">Укажите цену и вес, чтобы увидеть расчёт</div>';
     return null;
   }
@@ -516,6 +572,7 @@ function calc() {
   const days = state.method === 'air' ? '3–7 дней' : '15–25 дней';
 
   tween($('total'), total, v => v.toFixed(2) + ' BYN');
+  $('totalRub').textContent = `≈ ${fmtRub(total)} ₽`;
   $('rows').innerHTML =
     `<div class="res-line"><span>Товар</span><b>${goods.toFixed(2)} BYN</b></div>` +
     `<div class="res-line"><span>Комиссия ${CONFIG.SERVICE_PERCENT}%</span><b>${service.toFixed(2)} BYN</b></div>` +
@@ -556,9 +613,15 @@ $('send').onclick = () => {
 // тарифы
 $('ratesNote').textContent =
   `Курс юаня: ${CONFIG.CNY_RATE} BYN. Комиссия байера: ${CONFIG.SERVICE_PERCENT}% от цены товара, минимум ${CONFIG.SERVICE_MIN} BYN.`;
-$('examples').innerHTML = [0.5, 1, 2, 5].map(kg =>
-  `<tr><td>${kg} кг</td><td>${shippingCost(kg, 'normal').toFixed(0)} BYN</td><td>${shippingCost(kg, 'air').toFixed(0)} BYN</td></tr>`
-).join('');
+$('examples').innerHTML = [0.5, 1, 2, 5].map(kg => {
+  const econ = shippingCost(kg, 'normal');
+  const air = shippingCost(kg, 'air');
+  return `<tr>
+    <td>${kg} кг</td>
+    <td>${econ.toFixed(0)} BYN<small>${fmtRub(econ)} ₽</small></td>
+    <td>${air.toFixed(0)} BYN<small>${fmtRub(air)} ₽</small></td>
+  </tr>`;
+}).join('');
 
 // менеджер
 $('contact').onclick = () => {
