@@ -713,6 +713,64 @@ $('showcaseList').innerHTML = SHOWCASE.map(i => {
   </div>`;
 }).join('');
 $('ratesNote')?.insertAdjacentElement('afterend', showcase);
+  // чек-картинка
+function makeReceipt() {
+  const cny = parseFloat($('price').value) || 0;
+  const kg = parseFloat($('weight').value) || 0;
+  if (!cny || !kg) return showError('Укажите цену и вес, чтобы сделать чек');
+
+  const goods = cny * CONFIG.CNY_RATE;
+  const service = Math.max(goods * CONFIG.SERVICE_PERCENT / 100, CONFIG.SERVICE_MIN);
+  const shipping = shippingCost(kg, state.method);
+  const total = goods + service + shipping;
+  const rub = Math.round(total * CONFIG.RUB_PER_BYN).toLocaleString('ru-RU');
+  const method = state.method === 'air' ? 'Авиа' : 'Эконом';
+  const link = ($('link').value.trim() || '—').slice(0, 30);
+
+  const W = 720, H = 1000;
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const x = cv.getContext('2d');
+  const sans = '26px -apple-system, system-ui, sans-serif';
+
+  x.fillStyle = '#f5f3ee'; x.fillRect(0, 0, W, H);
+  x.beginPath(); x.roundRect(40, 40, W - 80, H - 80, 36); x.fillStyle = '#ffffff'; x.fill();
+  x.beginPath(); x.roundRect(40, 40, W - 80, 170, 36); x.fillStyle = '#141414'; x.fill();
+
+  x.textAlign = 'center';
+  x.fillStyle = '#f5f3ee'; x.font = 'bold 52px Georgia, serif';
+  x.fillText('MANGOXXA', W / 2, 130);
+  x.fillStyle = '#9fd8c4'; x.font = sans;
+  x.fillText('Чек расчёта · ' + new Date().toLocaleDateString('ru-RU'), W / 2, 176);
+
+  x.textAlign = 'left';
+  let y = 270;
+  const row = (label, value) => {
+    x.font = sans; x.fillStyle = '#8a8677'; x.fillText(label, 90, y);
+    x.font = '28px -apple-system, system-ui, sans-serif'; x.fillStyle = '#141414';
+    x.textAlign = 'right'; x.fillText(value, W - 90, y); x.textAlign = 'left';
+    y += 30;
+    x.fillStyle = '#e3dfd4'; x.fillRect(90, y, W - 180, 2);
+    y += 40;
+  };
+  row('Площадка', state.market || '—');
+  row('Ссылка', link);
+  row('Цена товара', cny + ' ¥');
+  row('Размер', $('size').value.trim() || '—');
+  row('Доставка', `${method}, ${kg} кг`);
+  row('Товар', goods.toFixed(2) + ' BYN');
+  row(`Комиссия ${CONFIG.SERVICE_PERCENT}%`, service.toFixed(2) + ' BYN');
+  row('Доставка BYN', shipping.toFixed(2) + ' BYN');
+
+  y += 20;
+  x.font = sans; x.fillStyle = '#8a8677'; x.fillText('Итого', 90, y);
+  x.textAlign = 'right';
+  x.font = 'bold 60px Georgia, serif'; x.fillStyle = '#0d5c4a';
+  x.fillText(total.toFixed(2) + ' BYN', W - 90, y + 10);
+  x.font = sans; x.fillStyle = '#8a8677';
+  x.fillText('≈ ' + rub + ' ₽', W - 90, y + 52);
+
+  x.textAlign = 'center'; x.font = '22px -apple-system, system-
 </script>
 </body>
 </html>
