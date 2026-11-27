@@ -630,6 +630,57 @@ $('contact').onclick = () => {
   else window.open(CONFIG.MANAGER_LINK, '_blank');
 };
 if (tg?.initDataUnsafe?.user?.first_name) $('hi').textContent = 'Привет, ' + tg.initDataUnsafe.user.first_name + '!';
+  // вибрация при нажатии кнопок
+document.addEventListener('click', e => {
+  if (e.target.closest('button')) tg?.HapticFeedback?.impactOccurred('light');
+});
+
+// автоопределение площадки по ссылке
+const linkEl = $('link'), marketEl = $('market');
+const MARKET_HINTS = [['taobao','Taobao'],['tmall','Taobao'],['1688','1688'],['weidian','Weidian'],['pinduoduo','Pinduoduo'],['yangkeduo','Pinduoduo'],['poizon','Poizon'],['dewu','Poizon']];
+if (linkEl && marketEl) linkEl.addEventListener('input', () => {
+  const url = linkEl.value.toLowerCase();
+  const hit = MARKET_HINTS.find(([k]) => url.includes(k));
+  if (hit) marketEl.value = hit[1];
+});
+
+// главная кнопка Telegram внизу экрана
+if (tg?.MainButton) {
+  const sendBtn = [...document.querySelectorAll('button')].find(b => /отправ/i.test(b.textContent));
+  tg.MainButton.setText('Отправить заявку');
+  tg.MainButton.show();
+  tg.MainButton.onClick(() => sendBtn?.click());
+}
+  // конфетти после нажатия «Отправить»
+function confetti() {
+  const colors = ['#0d5c4a', '#1f8a6e', '#f5c542', '#c23b3b', '#ffffff'];
+  for (let i = 0; i < 90; i++) {
+    const p = document.createElement('div');
+    const size = 6 + Math.random() * 6;
+    p.style.cssText = `position:fixed;top:-20px;left:${Math.random() * 100}vw;width:${size}px;height:${size * 0.4}px;background:${colors[i % colors.length]};z-index:9999;pointer-events:none;border-radius:2px`;
+    document.body.appendChild(p);
+    p.animate([
+      { transform: 'translate(0,0) rotate(0deg)' },
+      { transform: `translate(${(Math.random() - 0.5) * 120}px, ${window.innerHeight + 60}px) rotate(${Math.random() * 720}deg)` }
+    ], { duration: 1800 + Math.random() * 1200, easing: 'ease-in', fill: 'forwards' }).onfinish = () => p.remove();
+  }
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (b && /отправ/i.test(b.textContent)) confetti();
+});
+  // кнопка «Поделиться»
+const shareUrl = 'https://t.me/mangoxxa_calc_bot';
+const shareText = 'Считаю стоимость выкупа в Mangoxxa, очень удобно 👇';
+const shareBtn = document.createElement('button');
+shareBtn.textContent = '↗ Поделиться с друзьями';
+shareBtn.style.cssText = 'width:100%;margin-top:10px;padding:14px;border:1px solid #e3dfd4;background:#fff;border-radius:14px;font-size:15px;color:#141414;';
+shareBtn.onclick = () => {
+  const url = 'https://t.me/share/url?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(shareText);
+  if (tg?.openTelegram) tg.openTelegram(url); else window.open(url, '_blank');
+};
+$('contact')?.insertAdjacentElement('afterend', shareBtn);
+  
 </script>
 </body>
 </html>
