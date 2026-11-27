@@ -629,6 +629,7 @@ $('contact').onclick = () => {
   if (tg?.openTelegram) tg.openTelegram(CONFIG.MANAGER_LINK);
   else window.open(CONFIG.MANAGER_LINK, '_blank');
 };
+if (tg?.initDataUnsafe?.user?.first_name) $('hi').textContent = 'Привет, ' + tg.initDataUnsafe.user.first_name + '!';
 </script>
 </body>
 </html>
