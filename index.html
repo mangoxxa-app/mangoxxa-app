@@ -771,6 +771,34 @@ function makeReceipt() {
   x.fillText('≈ ' + rub + ' ₽', W - 90, y + 52);
 
   x.textAlign = 'center'; x.font = '22px -apple-system, system-
+    // зимняя тема
+const WINTER = true; // поставьте false, чтобы выключить снег и гирлянду
+if (WINTER) {
+  // снег
+  for (let i = 0; i < 40; i++) {
+    const f = document.createElement('div');
+    f.textContent = '❄';
+    f.style.cssText = `position:fixed;top:-30px;left:${Math.random() * 100}vw;font-size:${10 + Math.random() * 12}px;color:#7a9cb5;opacity:.7;pointer-events:none;z-index:9000;`;
+    document.body.appendChild(f);
+    f.animate([
+      { transform: 'translate(0, 0)' },
+      { transform: `translate(${(Math.random() - 0.5) * 60}px, ${window.innerHeight + 60}px)` }
+    ], { duration: 7000 + Math.random() * 7000, delay: Math.random() * 7000, iterations: Infinity });
+  }
+
+  // гирлянда сверху
+  const garland = document.createElement('div');
+  garland.style.cssText = 'position:fixed;top:4px;left:0;right:0;display:flex;justify-content:space-around;z-index:9001;pointer-events:none;';
+  const colors = ['#ff5a5a', '#f5c542', '#5fd3a8', '#6aa9ff'];
+  for (let i = 0; i < 18; i++) {
+    const b = document.createElement('i');
+    const c = colors[i % colors.length];
+    b.style.cssText = `display:block;width:9px;height:9px;border-radius:50%;background:${c};box-shadow:0 0 8px ${c};`;
+    b.animate([{ opacity: .25 }, { opacity: 1 }, { opacity: .25 }], { duration: 1200, delay: i * 120, iterations: Infinity });
+    garland.appendChild(b);
+  }
+  document.body.appendChild(garland);
+}
 </script>
 </body>
 </html>
