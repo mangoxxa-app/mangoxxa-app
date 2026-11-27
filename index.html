@@ -726,7 +726,7 @@ function makeReceipt() {
   const method = state.method === 'air' ? 'Авиа' : 'Эконом';
   const link = ($('link').value.trim() || '—').slice(0, 30);
 
-  const W = 720, H = 1000;
+  const W = 720, H = 1100;
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const x = cv.getContext('2d');
@@ -789,15 +789,15 @@ function showReceipt(src) {
 
 const receiptBtn = document.createElement('button');
 receiptBtn.className = 'cta';
-receiptBtn.style.cssText = 'margin-top:10px;background:#141414;';
+receiptBtn.style.cssText = 'width:100%;margin-top:10px;padding:14px;border:1px solid #e3dfd4;background:#fff;color:#141414;border-radius:18px;font-size:15px;font-weight:600;';
 receiptBtn.textContent = '🧾 Сделать чек-картинку';
 receiptBtn.onclick = makeReceipt;
-$('send').insertAdjacentElement('beforebegin', receiptBtn);
+$('send').insertAdjacentElement('afterend', receiptBtn);
     // зимняя тема
 const WINTER = true; // поставьте false, чтобы выключить снег и гирлянду
 if (WINTER) {
   // снег
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 20; i++) {
     const f = document.createElement('div');
     f.textContent = '❄';
     f.style.cssText = `position:fixed;top:-30px;left:${Math.random() * 100}vw;font-size:${10 + Math.random() * 12}px;color:#7a9cb5;opacity:.7;pointer-events:none;z-index:9000;`;
