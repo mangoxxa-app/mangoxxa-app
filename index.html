@@ -770,6 +770,29 @@ function makeReceipt() {
   x.fillText('≈ ' + rub + ' ₽', W - 90, y + 52);
 
   x.textAlign = 'center'; x.font = '22px -apple-system, system-
+      x.fillStyle = '#8a8677';
+  x.fillText('Оплата 100% предоплатой после подтверждения менеджером', W / 2, H - 110);
+
+  showReceipt(cv.toDataURL('image/png'));
+}
+
+function showReceipt(src) {
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'position:fixed;inset:0;background:rgba(20,20,20,.88);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;';
+  wrap.innerHTML = `
+    <img src="${src}" style="max-width:100%;max-height:78vh;border-radius:20px;">
+    <div style="color:#f5f3ee;font-size:14px;margin-top:14px;text-align:center;">Зажмите картинку, чтобы сохранить или отправить менеджеру</div>
+    <button style="margin-top:14px;padding:12px 28px;border:none;border-radius:14px;background:#f5f3ee;color:#141414;font-size:15px;">Закрыть</button>`;
+  wrap.querySelector('button').onclick = () => wrap.remove();
+  document.body.appendChild(wrap);
+}
+
+const receiptBtn = document.createElement('button');
+receiptBtn.className = 'cta';
+receiptBtn.style.cssText = 'margin-top:10px;background:#141414;';
+receiptBtn.textContent = '🧾 Сделать чек-картинку';
+receiptBtn.onclick = makeReceipt;
+$('send').insertAdjacentElement('beforebegin', receiptBtn);
     // зимняя тема
 const WINTER = true; // поставьте false, чтобы выключить снег и гирлянду
 if (WINTER) {
