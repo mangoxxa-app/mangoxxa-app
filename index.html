@@ -599,7 +599,8 @@ function showError(msg) {
 
 $('send').onclick = () => {
   $('err').style.display = 'none';
-  const link = $('link').value.trim();
+  const links = [$('link').value.trim(), ...[...document.querySelectorAll('.extra-link')].map(i => i.value.trim())].filter(Boolean);
+  const link = links.join('\n');
   const c = calc();
   if (!link) return showError('Вставьте ссылку на товар');
   if (!c) return showError('Укажите цену и вес');
@@ -820,6 +821,27 @@ if (WINTER) {
     garland.appendChild(b);
   }
   document.body.appendChild(garland);
+}
+  // несколько ссылок
+const linkRow = $('link').parentElement;
+const extraBox = document.createElement('div');
+const addLinkBtn = document.createElement('button');
+addLinkBtn.textContent = '+ Ещё ссылка';
+addLinkBtn.style.cssText = 'width:100%;margin-top:10px;padding:10px 14px;border:1px dashed #cfcabb;background:#fff;border-radius:14px;color:#8a8677;font-size:14px;';
+addLinkBtn.onclick = () => {
+  const inp = document.createElement('input');
+  inp.className = 'extra-link';
+  inp.placeholder = 'https://...';
+  inp.style.marginTop = '8px';
+  extraBox.appendChild(inp);
+};
+linkRow.insertAdjacentElement('afterend', extraBox);
+extraBox.insertAdjacentElement('afterend', addLinkBtn);
+
+// приветствие с ником
+if (tg?.initDataUnsafe?.user) {
+  const u = tg.initDataUnsafe.user;
+  $('hi').textContent = 'Привет, ' + (u.username ? '@' + u.username : u.first_name) + '!';
 }
 </script>
 </body>
