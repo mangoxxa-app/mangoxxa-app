@@ -691,7 +691,7 @@ document.addEventListener('click', e => {
 const shareUrl = 'https://t.me/mangoxxa_calc_bot' + (myId ? '?start=ref' + myId : '');
 const shareText = 'Считаю стоимость выкупа в Mangoxxa, очень удобно 👇';
 const shareBtn = document.createElement('button');
-shareBtn.textContent = '🎁 Друг получит 20 BYN, вы 10 BYN за каждого приглашённого';
+shareBtn.textContent = `🎁 Пригласите друга: ему −20 BYN (≈${Math.round(20*CONFIG.RUB_PER_BYN)} ₽), вам +10 BYN (≈${Math.round(10*CONFIG.RUB_PER_BYN)} ₽) за каждого`;
 const shareHint = document.createElement('div');
 shareHint.textContent = 'Друг получит скидку 20 BYN на выкуп, а вы 10 BYN за каждого приглашённого.';
 shareHint.style.cssText = 'font-size:12px;color:#8a8677;margin-top:6px;text-align:center;line-height:1.5;';
