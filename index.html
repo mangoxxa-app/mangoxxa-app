@@ -463,6 +463,11 @@ const $ = id => document.getElementById(id);
 const state = { quality: 'original', condition: 'new', method: 'normal', market: '' };
 
 const user = tg?.initDataUnsafe?.user;
+  const params = new URLSearchParams(location.search);
+const myId = params.get('id') || '';
+const refId = params.get('ref') || '';
+const myName = params.get('u') ? '@' + params.get('u') : (params.get('n') || '');
+if (myName) $('hi').textContent = 'Привет, ' + myName + '!';
 if (user?.first_name) $('hi').textContent = `Привет, ${user.first_name}`;
 
 if (CONFIG.BUYOUT.number) {
@@ -579,7 +584,8 @@ function calc() {
   const goods = cny * CONFIG.CNY_RATE;
   const service = Math.max(goods * CONFIG.SERVICE_PERCENT / 100, CONFIG.SERVICE_MIN);
   const shipping = shippingCost(kg, state.method);
-  const total = goods + service + shipping;
+  const disc = refId && refId !== myId ? 20 : 0;
+const total = Math.max(0, goods + service + shipping - disc);
   const days = state.method === 'air' ? '3–7 дней' : '15–25 дней';
 
   tween($('total'), total, v => v.toFixed(2) + ' BYN');
@@ -588,7 +594,7 @@ function calc() {
     `<div class="res-line"><span>Товар</span><b>${goods.toFixed(2)} BYN</b></div>` +
     `<div class="res-line"><span>Комиссия ${CONFIG.SERVICE_PERCENT}%</span><b>${service.toFixed(2)} BYN</b></div>` +
     `<div class="res-line"><span>Доставка, ${days}</span><b>${shipping.toFixed(2)} BYN</b></div>`;
-
+if (disc) $('rows').innerHTML += `<div class="res-line"><span>Скидка по приглашению</span><b>-${disc} BYN</b></div>`;
   return { cny, kg, total };
 }
 
@@ -619,6 +625,7 @@ $('send').onclick = () => {
     city: $('city').value.trim(),
     comment: $('comment').value.trim(),
     total_byn: c.total.toFixed(2),
+    ref: refId,
   }));
 };
 
@@ -681,7 +688,7 @@ document.addEventListener('click', e => {
   if (b && /отправ/i.test(b.textContent)) confetti();
 });
   // кнопка «Поделиться»
-const shareUrl = 'https://t.me/mangoxxa_calc_bot';
+const shareUrl = 'https://t.me/mangoxxa_calc_bot' + (myId ? '?start=ref' + myId : '');
 const shareText = 'Считаю стоимость выкупа в Mangoxxa, очень удобно 👇';
 const shareBtn = document.createElement('button');
 shareBtn.textContent = '↗ Поделиться с друзьями';
@@ -843,8 +850,7 @@ if (tg?.initDataUnsafe?.user) {
   const u = tg.initDataUnsafe.user;
   $('hi').textContent = 'Привет, ' + (u.username ? '@' + u.username : u.first_name) + '!';
 }
-  // проверка данных пользователя
-try { $('hi').textContent = 'Тест: tg ' + (tg ? 'есть' : 'нет') + ', user ' + (tg?.initDataUnsafe?.user ? 'да' : 'нет') + ', initData: ' + (tg?.initData ? 'есть' : 'пусто'); } catch (e) {}
+
 </script>
 </body>
 </html>
