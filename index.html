@@ -843,6 +843,8 @@ if (tg?.initDataUnsafe?.user) {
   const u = tg.initDataUnsafe.user;
   $('hi').textContent = 'Привет, ' + (u.username ? '@' + u.username : u.first_name) + '!';
 }
+  // проверка данных пользователя
+try { $('hi').textContent = 'Тест: tg ' + (tg ? 'есть' : 'нет') + ', user ' + (tg?.initDataUnsafe?.user ? 'да' : 'нет') + ', initData: ' + (tg?.initData ? 'есть' : 'пусто'); } catch (e) {}
 </script>
 </body>
 </html>
