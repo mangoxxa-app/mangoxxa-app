@@ -691,7 +691,10 @@ document.addEventListener('click', e => {
 const shareUrl = 'https://t.me/mangoxxa_calc_bot' + (myId ? '?start=ref' + myId : '');
 const shareText = 'Считаю стоимость выкупа в Mangoxxa, очень удобно 👇';
 const shareBtn = document.createElement('button');
-shareBtn.textContent = '↗ Поделиться с друзьями';
+shareBtn.textContent = '🎁 Пригласить друга: скидка 20 BYN';
+const shareHint = document.createElement('div');
+shareHint.textContent = 'Друг получит скидку 20 BYN на выкуп, а вы 10 BYN за каждого приглашённого.';
+shareHint.style.cssText = 'font-size:12px;color:#8a8677;margin-top:6px;text-align:center;line-height:1.5;';
 shareBtn.style.cssText = 'width:100%;margin-top:10px;padding:14px;border:1px solid #e3dfd4;background:#fff;border-radius:14px;font-size:15px;color:#141414;';
 shareBtn.onclick = () => {
   const url = 'https://t.me/share/url?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(shareText);
